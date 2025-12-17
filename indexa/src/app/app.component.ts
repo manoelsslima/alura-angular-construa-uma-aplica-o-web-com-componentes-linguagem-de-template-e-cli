@@ -34,6 +34,11 @@ export class AppComponent {
   alfabeto: string = 'abcdefghijklmnopqrstuvwxyz';
   contatos: Contato[] = agenda;
 
+  // remove os acentos de uma string
+  removerAcentos(texto: string): string {
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   // two way data binding
   filtroPorTexto: string = '';
 
@@ -41,12 +46,12 @@ export class AppComponent {
     if (!this.filtroPorTexto) {
       return this.contatos;
     }
-    return this.contatos.filter(contato => contato.nome.toLowerCase().includes(this.filtroPorTexto.toLocaleLowerCase()));
+    return this.contatos.filter(contato => this.removerAcentos(contato.nome.toLowerCase()).includes(this.removerAcentos(this.filtroPorTexto.toLocaleLowerCase())));
   }
 
   // one way data binding
   filtrarContatosPorLetraInicial(letra: string): Contato[] {
     //return this.contatos.filter(contato => contato.nome.toLocaleLowerCase().startsWith(letra.toLocaleLowerCase()));
-    return this.filtrarContatosPorTexto().filter(contato => contato.nome.toLocaleLowerCase().startsWith(letra.toLocaleLowerCase()));
+    return this.filtrarContatosPorTexto().filter(contato => this.removerAcentos(contato.nome.toLocaleLowerCase()).startsWith(this.removerAcentos(letra.toLocaleLowerCase())));
   }
 }
