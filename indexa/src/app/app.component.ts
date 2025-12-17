@@ -5,14 +5,15 @@ import { ContainerComponent } from "./componentes/container/container.component"
 import { CabecalhoComponent } from './componentes/cabecalho/cabecalho.component';
 import { SeparadorComponent } from './componentes/separador/separador.component';
 import { ContatoComponent } from './componentes/contato/contato.component';
+import { FormsModule } from '@angular/forms';
+
+import agenda from './agenda.json';
 
 interface Contato {
   id: number;
   nome: string;
   telefone: string;
 }
-
-import agenda from './agenda.json';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ import agenda from './agenda.json';
     ContainerComponent,
     ContatoComponent,
     CabecalhoComponent,
+    FormsModule,
     SeparadorComponent
   ],
   templateUrl: './app.component.html',
@@ -32,7 +34,19 @@ export class AppComponent {
   alfabeto: string = 'abcdefghijklmnopqrstuvwxyz';
   contatos: Contato[] = agenda;
 
+  // two way data binding
+  filtroPorTexto: string = '';
+
+  filtrarContatosPorTexto(): Contato[] {
+    if (!this.filtroPorTexto) {
+      return this.contatos;
+    }
+    return this.contatos.filter(contato => contato.nome.toLowerCase().includes(this.filtroPorTexto.toLocaleLowerCase()));
+  }
+
+  // one way data binding
   filtrarContatosPorLetraInicial(letra: string): Contato[] {
-    return this.contatos.filter(contato => contato.nome.toLocaleLowerCase().startsWith(letra.toLocaleLowerCase()));
+    //return this.contatos.filter(contato => contato.nome.toLocaleLowerCase().startsWith(letra.toLocaleLowerCase()));
+    return this.filtrarContatosPorTexto().filter(contato => contato.nome.toLocaleLowerCase().startsWith(letra.toLocaleLowerCase()));
   }
 }
